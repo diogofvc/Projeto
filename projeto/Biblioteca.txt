@@ -1,5 +1,5 @@
 
-Numero de Livros: 2
+Numero de Livros: 4
 
 Numero de Leitores: 2
 
@@ -18,6 +18,22 @@ ISBN: 123456
 Titulo: titulo2
 Autor: autor2
 Editora: editora2
+Estado: requisitado
+
+Livro3:
+
+ISBN: 12345
+Titulo: tirulo1
+Autor: auto231
+Editora: 1234124
+Estado: disponivel
+
+Livro4:
+
+ISBN: 1234567890123
+Titulo: 124141
+Autor: 41241414
+Editora: 12412412
 Estado: disponivel
 
 Leitor 1: 

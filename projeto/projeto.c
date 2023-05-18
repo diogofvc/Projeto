@@ -11,7 +11,6 @@
 #define NLEITORES 100
 
 void tempo();
-
 void menu();
 void registar_livro();
 void registar_leitor();
@@ -23,7 +22,7 @@ void guardar_ficheiro();
 void sair();
 
 typedef struct {
-    int ISBN;
+    long int ISBN;    /*ISBN tem que ser (long long int) mas esta a dar warning*/
     char Titulo[NLIVROS];
     char Autor[NLIVROS];
     char Editora[NLIVROS];
@@ -44,7 +43,6 @@ leitor_t leitor[NLEITORES];
 
 int nlivro=0;
 int nleitor=0;
-
 
 int main(){
     carregar_ficheiro();
@@ -70,27 +68,28 @@ void menu(){
         printf("\t\tOPCAO: ");
         scanf("%d", &num);
         printf("\n");
-            if(num==1){
+        switch(num){
+            case 1:
                 registar_livro();
-            }
-            if(num==2){
+            break;
+            case 2:
                 registar_leitor();
-            }
-            if(num==3){
+            break;
+            case 3:
                 requisitar_livro();
-            }
-            if(num==4){
+            break;
+            case 4:
                 devolver_livro();
-            }
-            if(num==5){
+            break;
+            case 5:
                 listagens();
-            }
-            if(num==0){
+            break;
+            case 0:
                 sair();
-            }
-            if(num!=1 && num!=2 && num!=3 && num!=4 && num!=5&& num!=0){
+            break;
+            default:
                 printf("Opcao invalida. Escolha uma do menu!\n\n");
-            }
+        }
     }while(num!=1 && num!=2 && num!=3 && num!=4 && num!=5 && num!=0);
 
 }
@@ -99,8 +98,9 @@ void registar_livro(){
 
     fflush(stdin);
     printf("Digite o ISBN:\n");
-    scanf("%d", &livro[nlivro].ISBN);
-    printf("O ISBN e %d \n\n", livro[nlivro].ISBN);
+
+    scanf("%ld", &livro[nlivro].ISBN);
+    printf("O ISBN e %ld \n\n", livro[nlivro].ISBN);
 
     fflush(stdin);
     printf("Digite o Titulo:\n");
@@ -120,11 +120,8 @@ void registar_livro(){
     strcpy(livro[nlivro].Estado, "disponivel");//Permite copiar strOrigem para strDestino.
     nlivro++;
 
-
-
-
     printf("\nDeseja registar outro Livro?\n");
-    printf("Se sim digite \"s\", se deseja voltar ao menu inicial digite \"n\"!\n");
+    printf("Se sim, digite \"s\", se deseja voltar ao menu inicial pressione qualquer tecla!\n");
 
     fflush(stdin);
     scanf("%c", &opcao);
@@ -133,14 +130,9 @@ void registar_livro(){
         case 'S':
             registar_livro();
         break;
-        case 'n':
-        case 'N':
-            menu();
-        break;
         default:
             menu();
     }
-
 
 }
 void registar_leitor(){
@@ -183,7 +175,7 @@ void registar_leitor(){
     nleitor++;
 
     printf("\nDeseja registar outro Leitor?\n");
-    printf("Se sim digite \"s\", se deseja voltar ao menu inicial digite \"n\"!\n");
+    printf("Se sim, digite \"s\", se deseja voltar ao menu inicial pressione qualquer tecla!\n");
 
 
     fflush(stdin);
@@ -192,10 +184,6 @@ void registar_leitor(){
         case 's':
         case 'S':
             registar_leitor();
-        break;
-        case 'n':
-        case 'N':
-            menu();
         break;
         default:
             menu();
@@ -215,61 +203,59 @@ void requisitar_livro(){
             char titulo_livro[NLIVROS];
             fflush(stdin);
             gets(titulo_livro);
-            for(n=0; n<nlivro; n++){
-
+            for(int n=0; n<nlivro; n++){
                 if(strcmp(titulo_livro, livro[n].Titulo) == 0){//Permite comparar alfabeticamente duas strings. Devolve 0 - se as duas strings forem alfabeticamente iguais
                     printf("Titulo existe!\n");
                     char estado_disponivel[NLIVROS]= "disponivel";
                     if(strcmp(livro[n].Estado, estado_disponivel) == 0){
-                        printf("Esta disponivel");
+                        printf("Esta disponivel\n");
                         printf("Insira a data da requisicao!\n");
-                            fflush(stdin);
-                            int dia_requisitar;
-                            int mes_requisitar;
-                            int ano_requisitar;
+                        fflush(stdin);
+                        int dia_requisitar;
+                        int mes_requisitar;
+                        int ano_requisitar;
 
-                            printf("Dia:\n");
-                            scanf("%d", &dia_requisitar);
-                            printf("Dia e %d \n", dia_requisitar);
-                            fflush(stdin);
-                            printf("Mes:\n");
-                            scanf("%d", &mes_requisitar);
-                            printf("Mes e %d \n", mes_requisitar);
-                            fflush(stdin);
-                            printf("Ano:\n");
-                            scanf("%d", &ano_requisitar);
-                            printf("Ano e %d \n", ano_requisitar);
-                            livro[n].Estado = "requisitado";
-
-
+                        printf("Dia:\n");
+                        scanf("%d", &dia_requisitar);
+                        fflush(stdin);
+                        printf("Mes:\n");
+                        scanf("%d", &mes_requisitar);
+                        fflush(stdin);
+                        printf("Ano:\n");
+                        scanf("%d", &ano_requisitar);
+                        strcpy(livro[n].Estado, "requisitado");//Permite copiar strOrigem para strDestino.
+                        menu();
                     }else{
-                        printf("Nao esta disponivel\n");
+                        printf("Nao esta disponivel\n\n");
+                        menu();
                     }
-
-
                 }
-                else{
-                    printf("Livro nao encontrado!\n");
-                }
-
- }
-            menu();
-
-
-
-
-        }else{
-            printf("Codigo de Leitor invalido!\n");
-            printf("Faca o seu registo antes de requisitar um livro!\n\n");
+            }
+            printf("Livro nao encontrado!\n\n");
             menu();
         }
     }
+    printf("Codigo de Leitor invalido!\n");
+    printf("Faca o seu registo antes de requisitar um livro!\n\n");
+    menu();
 
 }
 void devolver_livro(){
-    printf("Estou na funcao devolver_livro\n\n");
-    menu();
-}
+    long int isbn;
+    printf("Insira o ISBN do livro!\n");
+    scanf("%ld", &isbn);
+
+    for(int n=0; n<nlivro;n++){
+        if(isbn == livro[n].ISBN){
+            printf("Livro devolvido!\n");
+            strcpy(livro[n].Estado, "disponivel");
+            menu();
+        printf("Nao existe nenhum livro este ISBN!\n");
+        menu();
+
+        }
+    }
+ }
 void listagens(){
 
     int num=0;
@@ -285,19 +271,22 @@ void listagens(){
         printf("\t\tOPCAO: ");
         scanf("%d", &num);
         printf("\n");
-            if(num==1){
+        switch(num){
+            case 1:
                 for (int n = 0; n < nlivro; n++) {
                     printf("\nLivro%d:\n\n", n + 1);
-                    printf("ISBN:\t\t %d\n", livro[n].ISBN);
+                    printf("ISBN:\t\t %ld\n", livro[n].ISBN);
                     printf("Titulo:\t\t %s\n", livro[n].Titulo);
                     printf("Autor:\t\t %s\n", livro[n].Autor);
                     printf("Editora:\t %s\n", livro[n].Editora);
                     printf("Estado: %s\n", livro[n].Estado);
                 }
-                printf("\n");
+                printf("\nPressione uma tecla para continuar!\n\n");
+                getch();
                 listagens();
-            }
-            if(num==2){
+            break;
+
+            case 2:
                 for (int n = 0; n < nleitor; n++) {
                     printf("\nLeitor %d: \n\n", n + 1);
                     printf("Codigo_leitor:\t\t %d\n", leitor[n].Codigo_leitor);
@@ -306,18 +295,22 @@ void listagens(){
                     printf("Localidade:\t\t %s\n", leitor[n].Localidade);
                     printf("Contacto:\t\t %d\n\n", leitor[n].Contacto);
                 }
+                printf("\nPressione uma tecla para continuar!\n\n");
+                getch();
                 listagens();
-            }
-            if(num==3){
-            }
-            if(num==4){
-            }
-            if(num==0){
+            break;
+            case 3:
+                listagens();
+            break;
+            case 4:
+                listagens();
+            break;
+            case 0:
                 menu();
-            }
-            if(num!=1 && num!=2 && num!=3 && num!=4 && num!=5&& num!=0){
+            break;
+            default:
                 printf("Opcao invalida. Escolha uma do menu!\n\n");
-            }
+        }
     }while(num!=1 && num!=2 && num!=3 && num!=4 && num!=0);
 
 }
@@ -329,7 +322,7 @@ void carregar_ficheiro(){
     for (int n = 0; n < nlivro; n++) {
         int n1=n+1;
         fscanf(ficheiro, "\nLivro%d:\n\n", &n1);
-        fscanf(ficheiro, "ISBN: %d\n", &livro[n].ISBN);
+        fscanf(ficheiro, "ISBN: %ld\n", &livro[n].ISBN);
         fscanf(ficheiro, "Titulo: %s\n", livro[n].Titulo);
         fscanf(ficheiro, "Autor: %s\n", livro[n].Autor);
         fscanf(ficheiro, "Editora: %s\n", livro[n].Editora);
@@ -353,7 +346,7 @@ void guardar_ficheiro(){
             fprintf(ficheiro, "\nNumero de Leitores: %d\n\n", nleitor);
         for (int n = 0; n < nlivro; n++) {
             fprintf(ficheiro, "\nLivro%d:\n\n", n + 1);
-            fprintf(ficheiro, "ISBN: %d\n", livro[n].ISBN);
+            fprintf(ficheiro, "ISBN: %ld\n", livro[n].ISBN);
             fprintf(ficheiro, "Titulo: %s\n", livro[n].Titulo);
             fprintf(ficheiro, "Autor: %s\n", livro[n].Autor);
             fprintf(ficheiro, "Editora: %s\n", livro[n].Editora);
@@ -373,24 +366,19 @@ void sair(){
     char opcao;
     fflush(stdin);
     printf("\nDeseja sair?\n");
-    printf("Se sim, Digite \"s\",se deseja voltar ao menu inicial digite \"n\"!\n");
+    printf("Se sim, digite \"s\", se deseja continuar digite qualquer tecla!\n");
     scanf("%c", &opcao);
     switch(opcao){
         case 's':
         case 'S':
             guardar_ficheiro();
-        printf("\nO programa foi encerrado!\n");
-        exit(0);
-        break;
-        case 'n':
-        case 'N':
-            menu();
+            printf("\nO programa foi encerrado!\n");
+            exit(0);
         break;
         default:
             menu();
     }
  }
-
 void tempo(){
     time_t tempo;
     struct tm *timeinfo;
@@ -421,5 +409,5 @@ void afixa_time(){
     time(&tempo);
     timeinfo=localtime(&tempo);
     printf("Data %02d/%02d/%02d \nHoras: %02d/%02d/%02d", timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-
 }
+
